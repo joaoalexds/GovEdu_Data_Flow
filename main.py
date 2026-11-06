@@ -35,3 +35,5 @@ for caminho_arquivo in arquivos:
     except:
         #apontar qual o arquivo que não subiu direito e mante-lo na mesma pasta
         print(f"O arquivo {os.path.basename(caminho_arquivo)}, apresentou erro ao ser carregado")
+
+print("O processo foi concluido!")
