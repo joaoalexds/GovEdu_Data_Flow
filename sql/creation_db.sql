@@ -40,6 +40,3 @@ ALTER TABLE gastos_ensino_superior ADD INDEX idx_data(ano_mes);
 ALTER TABLE gastos_ensino_superior ADD INDEX idx_codigo_subordinado(codigo_orgao_subordinado);
 ALTER TABLE gastos_ensino_superior ADD INDEX idx_nome_subordinado(nome_orgao_subordinado);
 ALTER TABLE gastos_ensino_superior ADD INDEX idx_orgao_superior(nome_orgao_superior);
-
-
-DROP TABLES gastos_ensino_superior;
