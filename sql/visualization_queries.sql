@@ -17,7 +17,7 @@ SELECT
     ) AS porcentagem
 FROM gastos_governo_db.gastos_ensino_superior
 GROUP BY nome_orgao_subordinado
-ORDER BY total_gasto DESC
+ORDER BY porcentagem DESC
 LIMIT 10;
 
 -- criando uma contagem de quantas vezes cada universidade gastou e quanto elas representam do total da verba
@@ -27,7 +27,7 @@ SELECT
     SUM(valor_empenhado) as valor_gasto,
     ROUND(
         ((SUM(valor_empenhado)) / (SELECT SUM(valor_empenhado) FROM gastos_governo_db.gastos_ensino_superior)) * 100, 2
-    ) AS percentual_por_programa
+    ) AS percentual_por_universidade
 FROM gastos_governo_db.gastos_ensino_superior
 GROUP BY nome_orgao_subordinado
 ORDER BY quantos_gastos_teve DESC
@@ -51,8 +51,20 @@ SELECT
     nome_grupo_de_despesa as nome_categoria,
     SUM(valor_empenhado) as valor_empenhado, 
     SUM(valor_abatido) as valor_pago,
-    SUM(restos_a_pagar) as restos
+    SUM(restos_a_pagar) AS restos
 FROM gastos_governo_db.gastos_ensino_superior
 GROUP BY(nome_grupo_de_despesa)
 ORDER BY nome_grupo_de_despesa ASC
 LIMIT 10;
+
+-- fazendo uma analise mês a mês de quanto foi gasto
+-- criando um valor acumulado que ainda resta a pagar
+SELECT
+    ano_mes as mes,
+    SUM(valor_empenhado) as total_empenhado,
+    SUM(valor_abatido) as valor_pago,
+    SUM(SUM(valor_empenhado) - SUM(valor_abatido)) OVER (ORDER BY ano_mes ASC) AS falta_pagar_acumulado
+FROM gastos_governo_db.gastos_ensino_superior
+GROUP BY(ano_mes)
+ORDER BY(mes) ASC
+LIMIT 12;
