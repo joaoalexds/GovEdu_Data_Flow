@@ -25,10 +25,8 @@ def loading(df: pd.DataFrame, engine):
             index= False,
             chunksize= 1000,
         )
-        print('Tentativa concluida')
-        forma = df.shape
-        linhas, colunas = forma
-        print(f"Foram passadas a DB {linhas} linhas, e {colunas} colunas")
+        linhas = df.shape[0]
+        print(f"Foram passadas a DB {linhas} linhas")
+        return linhas
     except Exception as e:
         print(e)
-        
