@@ -1,5 +1,3 @@
--- Active: 1793982439754@@127.0.0.1@3306
-
 -- como o codigo será reutilizado
 -- para nn criarmos a db mais de uma vez usamos if not exists
 CREATE DATABASE IF NOT EXISTS gastos_governo_DB
