@@ -7,16 +7,12 @@ import shutil
 from extraction import extraction
 from transforming import transforming
 from loading import create_conn, loading
-from inicializing_DB import criar_config_db
 
 arquivos = glob.glob('raw_data/*.csv')
 linhas = 0
 
 #vamos ter que chamar a conexao mais cedo
 engine = create_conn()
-
-#chama a funcão para configurar a DB
-criar_config_db('sql/creation_db.sql', engine)
 
 #montar um loop que percorre os arquivos e manda pra dentro das funções
 for caminho_arquivo in arquivos:
@@ -26,10 +22,6 @@ for caminho_arquivo in arquivos:
         
         #2. transformar com def transforming (convertes tipos, exluir linhas e agrupar gastos iguais)
         df = transforming(df)
-        
-        #3. carregar na base de dados. (sql alchemy)
-        #antes vamos criar a engine
-        ##engine = create_conn()
         
         #com o parametro criado, chamamos a loading
         #chamamos o loading e aproveitamos para somar o total de linhas passadas a DB
