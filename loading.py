@@ -12,6 +12,7 @@ def create_conn():
         password=os.getenv('password'),
         host=os.getenv('host'),
         database=os.getenv('database'),
+        port=int(os.getenv('port'))
     )
     engine = create_engine(string_url)
     return engine
