@@ -1,21 +1,4 @@
-import os
 import pandas as pd
-from sqlalchemy import create_engine, URL
-from dotenv import load_dotenv
-
-
-def create_conn():
-    load_dotenv()
-    string_url = URL.create(
-        "mysql+pymysql",
-        username=os.getenv('db_user'),
-        password=os.getenv('password'),
-        host=os.getenv('host'),
-        database=os.getenv('database'),
-        port=int(os.getenv('port'))
-    )
-    engine = create_engine(string_url)
-    return engine
 
 def loading(df: pd.DataFrame, engine):
     try:

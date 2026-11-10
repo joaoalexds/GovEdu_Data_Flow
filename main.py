@@ -6,13 +6,18 @@ import shutil
 
 from extraction import extraction
 from transforming import transforming
-from loading import create_conn, loading
+from loading import loading # retirar o create conn
+from inicializing_DB import ler_arquivosql, inicializing_db
 
 arquivos = glob.glob('raw_data/*.csv')
 linhas = 0
 
-#vamos ter que chamar a conexao mais cedo
-engine = create_conn()
+#lemos o arquivo sql para que tenhamos os comandos necessarios
+comandos = ler_arquivosql('sql/creation_db.sql')
+
+#vamos comecar a executar os comandos sql com os comandos que obtivemos
+#mandamos a engine final para engine
+engine = inicializing_db(comandos)
 
 #montar um loop que percorre os arquivos e manda pra dentro das funções
 for caminho_arquivo in arquivos:
