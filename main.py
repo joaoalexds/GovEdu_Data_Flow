@@ -4,16 +4,16 @@ import glob
 import os
 import shutil
 
-from extraction import extraction
-from transforming import transforming
-from loading import loading # retirar o create conn
-from inicializing_DB import ler_arquivosql, inicializing_db
+from etl.extraction import extraction
+from etl.transforming import transforming
+from etl.loading import loading
+from db.inicializing_db import ler_arquivosql, inicializing_db
 
-arquivos = glob.glob('raw_data/*.csv')
+arquivos = glob.glob('data/raw_data/*.csv')
 linhas = 0
 
 #lemos o arquivo sql para que tenhamos os comandos necessarios
-comandos = ler_arquivosql('sql/creation_db.sql')
+comandos = ler_arquivosql('db/sql/creation_db.sql')
 
 #vamos comecar a executar os comandos sql com os comandos que obtivemos
 #mandamos a engine final para engine
@@ -35,7 +35,7 @@ for caminho_arquivo in arquivos:
         #mudar o arquivo de pasta
         #pegamos o nome do arquivo e geramos o destino do arquivo
         nome_arquivo = os.path.basename(caminho_arquivo)
-        destino_arquivo = os.path.join('processed_data', nome_arquivo)
+        destino_arquivo = os.path.join('data/processed_data', nome_arquivo)
         
         #movemos com shutil (onde está -> para onde vai)
         shutil.move(caminho_arquivo, destino_arquivo)
