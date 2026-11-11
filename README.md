@@ -46,35 +46,35 @@ Os arquivos brutos são grandes, usam codificação `latin-1`, separador `;` e v
 
 ```mermaid
 flowchart LR
-    A[("📁 raw_data/<br>CSVs do Portal<br>da Transparência")] --> M["🐍 main.py<br>Orquestrador"]
-    M --> I["⚙️ initializing_db.py<br>Setup do BD"]
-    M --> B["🔎 extraction.py<br>Extract"]
-    M --> C["🧹 transforming.py<br>Transform"]
-    M --> D["💾 loading.py<br>Load"]
+    A[("📁 data/raw_data/<br>CSVs do Portal<br>da Transparência")] --> M["🔁 main.py<br>Orquestrador"]
+    M --> I["⚙️ db/inicializing_db.py<br>Setup do BD"]
+    M --> B["🔎 etl/extraction.py<br>Extract"]
+    M --> C["🪄 etl/transforming.py<br>Transform"]
+    M --> D["💾 etl/loading.py<br>Load"]
     D --> E[("🐬 MySQL<br>gastos_ensino_superior")]
-    M --> F[("📦 processed_data/<br>arquivos concluídos")]
+    M --> F[("📦 data/processed_data/<br>arquivos concluídos")]
 
     style A fill:#fff3cd,stroke:#f0ad4e,color:#000
     style E fill:#d1ecf1,stroke:#17a2b8,color:#000
     style F fill:#d4edda,stroke:#28a745,color:#000
 ```
 
-O orquestrador é o `main.py`: ele percorre todos os CSVs de `raw_data/`, executa as três etapas em sequência e move cada arquivo concluído para `processed_data/`.
+O orquestrador é o `main.py`: ele percorre todos os CSVs de `data/raw_data/`, executa as três etapas em sequência e move cada arquivo concluído para `data/processed_data/`.
 
 
 ---
 
 ## ⚙️ O que cada etapa faz
 
-### 0️⃣ Setup — `initializing_db.py`
+### 0️⃣ Setup — `db/initializing_db.py`
 
 | Ação | Detalhe | 
 | ----- | ----- | 
-| Leitura SQL | Lê o script estrutural `sql/creation_db.sql` | 
+| Leitura SQL | Lê o script estrutural `db/sql/creation_db.sql` | 
 | Conexão | Cria a *engine* de comunicação com o banco MySQL via SQLAlchemy | 
 | Inicialização | Automatiza a criação do banco de dados e da tabela alvo antes do processamento dos dados | 
 
-### 1️⃣ Extract — `extraction.py`
+### 1️⃣ Extract — `etl/extraction.py`
 
 | Ação | Detalhe | 
 | ----- | ----- | 
@@ -84,7 +84,7 @@ O orquestrador é o `main.py`: ele percorre todos os CSVs de `raw_data/`, execut
 | Filtro | Mantém somente `nome_subfuncao == 'Ensino superior'` | 
 | Limpeza | Remove linhas com valores nulos (`dropna`) | 
 
-### 2️⃣ Transform — `transforming.py`
+### 2️⃣ Transform — `etl/transforming.py`
 
 | Ação | Detalhe | 
 | ----- | ----- | 
@@ -95,7 +95,7 @@ O orquestrador é o `main.py`: ele percorre todos os CSVs de `raw_data/`, execut
 | Agregação | `groupby` por período, órgão, unidade, programa, ação, localizador, categoria e grupo de despesa, somando `valor_empenhado`, `valor_abatido` e `restos_a_pagar` | 
 | Ordenação | Resultado ordenado por `nome_orgao_subordinado` | 
 
-### 3️⃣ Load — `loading.py`
+### 3️⃣ Load — `etl/loading.py`
 
 | Ação | Detalhe | 
 | ----- | ----- | 
@@ -106,11 +106,11 @@ O orquestrador é o `main.py`: ele percorre todos os CSVs de `raw_data/`, execut
 
 ### 🎛️ Orquestração — `main.py`
 
-1. **Inicializa o banco de dados**: Aciona o módulo `initializing_db.py` para ler o arquivo SQL, automatizar a criação do banco e gerar a *engine* de conexão necessária para a carga.
-2. **Busca de arquivos**: Percorre todos os arquivos `.csv` localizados no diretório `raw_data/`.
+1. **Inicializa o banco de dados**: Aciona o módulo `db/initializing_db.py` para ler o arquivo SQL, automatizar a criação do banco e gerar a *engine* de conexão necessária para a carga.
+2. **Busca de arquivos**: Percorre todos os arquivos `.csv` localizados no diretório `data/raw_data/`.
 3. **Execução do ETL**: Aplica o ciclo completo de **extração → transformação → carga** individualmente para cada arquivo encontrado.
-4. **Organização**: Move automaticamente o arquivo processado com sucesso para a pasta `processed_data/`.
-5. **Tratamento de falhas**: Se ocorrer falha em um arquivo específico, ele **permanece em `raw_data/`** e o erro é reportado no terminal, sem interromper o processamento dos demais arquivos.
+4. **Organização**: Move automaticamente o arquivo processado com sucesso para a pasta `data/processed_data/`.
+5. **Tratamento de falhas**: Se ocorrer falha em um arquivo específico, ele **permanece em `data/raw_data/`** e o erro é reportado no terminal, sem interromper o processamento dos demais arquivos.
 6. **Resumo**: Exibe ao término da execução o total de linhas que foram enviadas com sucesso para o banco de dados.
 ---
 
@@ -118,20 +118,26 @@ O orquestrador é o `main.py`: ele percorre todos os CSVs de `raw_data/`, execut
 
 ```
 GovEdu_Data_Flow/
-├── 📁 raw_data/            # CSVs brutos aguardando processamento
-├── 📁 processed_data/      # CSVs já carregados no banco
-├── 📁 sql/                 # Armazena todas as queries SQL do projeto
-│   └── creation_db.sql     # Script de criação do banco/tabela
-│   └── ufabc_queries.sql   # Queries de consulta voltadas a UFABC
-│   └── queries.sql         # Queries de consulta do cenário geral
-├── 🐍 main.py              # Orquestrador do pipeline
-├── 🐍 extraction.py        # Etapa de extração
-├── 🐍 transforming.py      # Etapa de transformação
-├── 🐍 loading.py           # Etapa de carga
-├── 🐍 initializing_db.py   # Leitura do SQL e criação da engine
-├── 🔐 .env.example         # Modelo de variáveis de ambiente
-├── 🚫 .gitignore
-└── 📄 requirements.txt
+├── data/                      # Diretório central de dados
+│   ├── processed_data/        # CSVs já carregados no banco
+│   └── raw_data/              # CSVs brutos aguardando processamento
+├── db/                        # Infraestrutura e inicialização do banco
+│   ├── sql/                   # Armazena todas as queries SQL do projeto
+│   │   ├── creation_db.sql    # Script de criação do banco/tabela
+│   │   ├── ufabc_queries.sql  # Queries de consulta voltadas a UFABC
+│   │   └── queries.sql        # Queries de consulta do cenário geral
+│   ├── __init__.py            # Torna o diretório db um pacote importável
+│   └── inicializing_db.py     # Leitura do SQL e criação da engine
+├── etl/                       # Scripts do pipeline de dados
+│   ├── __init__.py            # Torna o diretório etl um pacote importável
+│   ├── extraction.py          # Etapa de extração
+│   ├── loading.py             # Etapa de carga
+│   └── transforming.py        # Etapa de transformação
+├── .env.example               # Modelo de variáveis de ambiente
+├── .gitignore                 # Arquivos ignorados pelo controle de versão do Git
+├── main.py                    # Orquestrador do pipeline
+├── README.md                  # Arquivo principal de documentação do projeto
+└── requirements.txt           # Lista de dependências e bibliotecas do projeto
 ```
 
 ---
