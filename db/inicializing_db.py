@@ -45,14 +45,20 @@ def inicializing_db(comandos):
             
     #como já criamos a db agora podemos fazer a engine correta com a database
     url_final = url_base.set(database=os.getenv('database'))
-    engine_final = create_engine(url_final)
+    engine_final = create_engine(
+        url_final,
+        isolation_level='AUTOCOMMIT', #roda cada pedaco do codigo imediatamente
+        pool_pre_ping=True, #testa a engine
+        pool_recycle=280 #faz a manutencao da conexao antes dela encerrar
+    )
     
     #vamos executar todos os outros comandos agora
     with engine_final.begin() as conn:
         for comando in comandos:
             try:
                 conn.execute(text(comando))
-            except(ProgrammingError, OperationalError) as error: #melhorar o tratamento de erros ainda
-                print(error)
+            except(ProgrammingError, OperationalError) as error: #no caso de serem criados dois indeces add index cai nesse except
+                if hasattr(error, 'orig') and error.orig.args[0] == 1061:
+                    print(f"Aviso: Índice já existe")
     
     return engine_final

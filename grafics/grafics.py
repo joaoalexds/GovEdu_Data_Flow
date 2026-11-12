@@ -214,18 +214,4 @@ def registros_mensais_ufabc(engine):
     fig.tight_layout()
     plt.show()
 
-
-load_dotenv()
-url_base = URL.create(
-        "mysql+pymysql",
-        username=os.getenv('db_user'),
-        password=os.getenv('password'),
-        host=os.getenv('host'),
-        port=int(os.getenv('port')),
-        database=os.getenv('database')
-    )
-
-engine = create_engine(url_base)
-grafico_maiores_valores_empenhado(engine)
-visualizacao_mes_mes_ufabc(engine)
-registros_mensais_ufabc(engine)
+#o arquivo tem que ficar limpo para que ao ser importado, rode perfeitamente

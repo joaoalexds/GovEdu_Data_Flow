@@ -1,8 +1,8 @@
-CREATE DATABASE IF NOT EXISTS gastos_governo_DB
-CHARACTER SET utf8mb4 -- seta o encoding para que nn tenhamos letras quebradas 
+CREATE DATABASE IF NOT EXISTS gastos_governo_db
+CHARACTER SET utf8mb4 
 COLLATE utf8mb4_unicode_ci;
 
-USE gastos_governo_DB;
+USE gastos_governo_db;
 
 CREATE TABLE IF NOT EXISTS gastos_ensino_superior(
     id INT AUTO_INCREMENT PRIMARY KEY,
