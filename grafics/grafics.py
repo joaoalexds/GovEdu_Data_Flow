@@ -13,17 +13,18 @@ def grafico_maiores_valores_empenhado(engine):
     """
     
     #cria a figura e o eixo
-    fig, ax = plt.subplots(figsize=(12,6))
+    fig, ax = plt.subplots(figsize=(16,10))
     
     
     #escrevemos a query que vai gerar nosso df
     query = """
     SELECT
-        nome_orgao_subordinado as Universidade,
-        valor_empenhado,
-        valor_abatido,
-        restos_a_pagar
+        nome_orgao_subordinado AS Universidade,
+        SUM(valor_empenhado) AS valor_empenhado,
+        SUM(valor_abatido) AS valor_abatido,
+        SUM(restos_a_pagar) AS restos_a_pagar
     FROM gastos_governo_db.gastos_ensino_superior
+    GROUP BY nome_orgao_subordinado
     ORDER BY valor_empenhado DESC
     LIMIT 5;
     """
@@ -72,7 +73,7 @@ def grafico_maiores_valores_empenhado(engine):
     #configurar a visualizacao
     ax.set_title("Valor empenhado vs Valor abatido vs Resto a pagar", fontsize= 14, pad= 15)
     ax.set_xlabel("Universidade", fontsize= 12)
-    ax.set_ylabel('Valor (R$)', fontsize= 12)
+    ax.set_ylabel('Valor (em milhões de R$)', fontsize= 12)
     
     #deixa os nomes do eixo x um pouco angulados para facilitar a leitura
     ax.tick_params(axis='x', rotation= 30)
@@ -142,8 +143,8 @@ def visualizacao_mes_mes_ufabc(engine):
     )
     
     #configurar a visualizacao
-    ax.set_title("Valor empenhado vs Valor abatido vs Resto a pagar", fontsize= 14, pad= 15)
-    ax.set_xlabel("Universidade", fontsize= 12)
+    ax.set_title("Valor empenhado vs Valor abatido vs Resto a pagar (UFABC)", fontsize= 14, pad= 15)
+    ax.set_xlabel("Data", fontsize= 12)
     ax.set_ylabel('Valor (em milhões R$)', fontsize= 12)
     
     #deixa os nomes do eixo x um pouco angulados para facilitar a leitura
@@ -204,9 +205,9 @@ def registros_mensais_ufabc(engine):
     )
     
     #configurar a visualizacao
-    ax.set_title("Valor empenhado vs Valor abatido vs Resto a pagar", fontsize= 14, pad= 15)
-    ax.set_xlabel("Universidade", fontsize= 12)
-    ax.set_ylabel('Valor (R$)', fontsize= 12)
+    ax.set_title("Quantidade de resgistros da UFABC", fontsize= 14, pad= 15)
+    ax.set_xlabel("Data", fontsize= 12)
+    ax.set_ylabel('Quantidade', fontsize= 12)
     
     #deixa os nomes do eixo x um pouco angulados para facilitar a leitura
     ax.tick_params(axis='x', rotation= 30)

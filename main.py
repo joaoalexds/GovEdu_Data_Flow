@@ -7,7 +7,7 @@ import shutil
 from etl.extraction import extraction
 from etl.transforming import transforming
 from etl.loading import loading
-from db.inicializing_db import ler_arquivosql, inicializing_db
+from db.initializing_db import ler_arquivosql, inicializing_db
 from grafics.grafics import grafico_maiores_valores_empenhado, visualizacao_mes_mes_ufabc, registros_mensais_ufabc
 
 arquivos = glob.glob('data/raw_data/*.csv')
